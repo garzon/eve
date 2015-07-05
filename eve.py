@@ -1,5 +1,3 @@
 import SolarSystems
 
-query = lambda map, solarSys: solarSys.isLowSafety() && 
-							solarSys.kills == 0 && 
-							solarSys.sov == 0 && 
+query = lambda solarSys: solarSys.isNotSoSafe() && solarSys.jumps
