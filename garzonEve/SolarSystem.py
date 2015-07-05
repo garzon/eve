@@ -24,13 +24,13 @@ class SolarSystem:
 		raise Exception("SolarSystem::__getitem__() error - keyname(%s) undefined" % keyname)
 
 	def isSafe(self):
-		return round(self._model.security) >= 0.5
+		return round(self._model.security*10) >= 5
 
 	def is00(self):
-		return round(self._model.security) <= 0
+		return round(self._model.security*10) <= 0
 
 	def isNotSoSafe(self):
-		return not self.is00() and not self.isSafe()
+		return (not self.is00()) and (not self.isSafe())
 
 	def _getNeighborInJumps(self, distance, searched):
 		searched.add(self._model.sysID)

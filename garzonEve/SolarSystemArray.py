@@ -23,7 +23,7 @@ class SolarSystemArray:
 
 	def add(self, sysID):
 		self.map[sysID] = SolarSystem(sysID)
-		return res
+		return self
 
 	def remove(self, sysID):
 		return self.map.pop(sysID)
@@ -36,7 +36,6 @@ class SolarSystemArray:
 		ret = SolarSystemArray()
 		for solarSysID in self.map:
 			if lamExp(SolarSystem(solarSysID)) == True:
-				print SolarSystem(solarSysID)
 				ret.add(solarSysID)
 		return ret
 
