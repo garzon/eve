@@ -1,7 +1,2 @@
-from garzonEve.SolarSystem import SolarSystem
-from garzonEve.SolarSystemArray import SolarSystemArray
-
-__all__ = [
-  "SolarSystem",
-  "SolarSystemArray"
-]
+from SolarSystem import SolarSystem
+from SolarSystemArray import SolarSystemArray

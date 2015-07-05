@@ -1,28 +1,28 @@
-from garzonEve.__Data import __Data
+from _Data import _Data
 import evelink.map
 
-class __SolarSystemModel(__Data):
+class _SolarSystemModel(_Data):
 
 	@classmethod
 	def fetch(self, sysID):
-		if not self.datapool.has_key(sysID):
-			self.datapool[sysID] = self(sysID)
-		return self.datapool[sysID]
+		if not self._datapool.has_key(sysID):
+			self._datapool[sysID] = self(sysID)
+		return self._datapool[sysID]
 
 	@classmethod
 	def loadAll(self):
 		# setup static data
-		res = self.cur.execute("select solarSystemID from mapSolarSystems").fetchall()
+		res = self._cursor.execute("select solarSystemID from mapSolarSystems").fetchall()
 		for solarArr in res:
 			self.fetch(solarArr[0])
 
 		# setup extra info
 		# setup jumps info
-		res = evelink.map.Map().jumps_by_system().result
-		for solarSysID in self.datapool:
-			self.datapool[solarSysID].isLoaded = True
+		res = evelink.map.Map().jumps_by_system().result[0]
+		for solarSysID in self._datapool:
+			self._datapool[solarSysID].isLoaded = True
 			if res.has_key(solarSysID):
-				self.datapool[solarSysID].jumpsNum = res[solarSysID]
+				self._datapool[solarSysID].jumpsNum = res[solarSysID]
 
 	def load(self):
 		self.isLoaded = True
@@ -32,7 +32,7 @@ class __SolarSystemModel(__Data):
 
 	def __init__(self, sysID):
 		self.neighbor = set()
-		self.sysID = arg
+		self.sysID = sysID
 		self.__setInfo()
 		self.__setNeighborhood()
 
@@ -41,7 +41,7 @@ class __SolarSystemModel(__Data):
 		self.jumpsNum = 0
 
 	def __setInfo(self):
-		res = self.__cursor.execute("select solarSystemName, security from mapSolarSystems where solarSystemID = '%d'" % self.gid).fetchone()
+		res = self._cursor.execute("select solarSystemName, security from mapSolarSystems where solarSystemID = '%d'" % self.sysID).fetchone()
 		self.name = res[0]
 		self.security = res[1]
 
@@ -54,11 +54,11 @@ class __SolarSystemModel(__Data):
 			raise "__SolarSystemModel::addNeighbor() - sysID type error"
 	
 	def __setNeighborhood(self):
-		res = self.__cursor.execute("select toSolarSystemID from mapSolarSystemJumps where fromSolarSystemID = '%d'" % self.gid).fetchall()
+		res = self._cursor.execute("select toSolarSystemID from mapSolarSystemJumps where fromSolarSystemID = '%d'" % self.sysID).fetchall()
 		self.__addNeighbor([toSysID[0] for toSysID in res])
 
 	def __str__(self):
-		return "<%s(%d): %.2f, jumps: %d>" % (self.name, self.gid, self.security, self.jumpsNum)
+		return "<%s(%d): %.2f, jumps: %d>" % (self.name, self.sysID, self.security, self.jumpsNum)
 
 	def __repr__(self):
 		return "__SolarSystemModel.__SolarSystemModel.fetch(%d)" % self.sysID

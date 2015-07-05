@@ -1,9 +1,9 @@
-from garzonEve.__SolarSystemModel import __SolarSystemModel
-from garzonEve.SolarSystem import SolarSystem
+from _SolarSystemModel import _SolarSystemModel
+from SolarSystem import SolarSystem
 
 class SolarSystemArray:
 
-	__allSystemsSingleton = 0
+	_allSystemsSingleton = 0
 
 	def __init__(self):
 		self.map = dict() # key: sysID, value: cooresponding instance of SolarSystem
@@ -12,13 +12,14 @@ class SolarSystemArray:
 	def fromIDSet(self, IDSet):
 		ret = self()
 		ret.map = {sysID: SolarSystem(sysID) for sysID in IDSet}
+		return ret
 
 	@classmethod
 	def all(self):
-		if isinstance(self.__allSystemsSingleton, int):
-			__SolarSystemModel.loadAll()
-			self.__allSystemsSingleton = self.fromIDSet(__SolarSystemModel.datapool)
-		return self.__allSystemsSingleton
+		if isinstance(self._allSystemsSingleton, int):
+			_SolarSystemModel.loadAll()
+			self._allSystemsSingleton = self.fromIDSet(_SolarSystemModel._datapool)
+		return self._allSystemsSingleton
 
 	def add(self, sysID):
 		self.map[sysID] = SolarSystem(sysID)
@@ -34,7 +35,7 @@ class SolarSystemArray:
 	def filter(self, lamExp):
 		ret = SolarSystemArray()
 		for solarSysID in self.map:
-			if query(SolarSystem(sysID)) == True:
+			if lamExp(SolarSystem(solarSysID)) == True:
 				ret.add(solarSysID)
 		return ret
 
