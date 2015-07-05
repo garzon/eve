@@ -36,6 +36,7 @@ class SolarSystemArray:
 		ret = SolarSystemArray()
 		for solarSysID in self.map:
 			if lamExp(SolarSystem(solarSysID)) == True:
+				print SolarSystem(solarSysID)
 				ret.add(solarSysID)
 		return ret
 
@@ -46,7 +47,7 @@ class SolarSystemArray:
 		return self.map[sysID]
 
 	def __str__(self):
-		return str(self.map)
+		return '\n'.join([str(x) for x in self.map.values()])
 
 	def __repr__(self):
 		return "SolarSystemArray.SolarSystemArray.fromIDSet(%s)" % repr(self.map.keys())

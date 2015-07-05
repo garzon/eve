@@ -5,9 +5,18 @@ class _SolarSystemModel(_Data):
 
 	@classmethod
 	def fetch(self, sysID):
-		if not self._datapool.has_key(sysID):
-			self._datapool[sysID] = self(sysID)
-		return self._datapool[sysID]
+		if isinstance(sysID, int):
+			if not self._datapool.has_key(sysID):
+				self._datapool[sysID] = self(sysID)
+			return self._datapool[sysID]
+		elif isinstance(sysID, str):
+			sysID = sysID.replace("-", "")
+			if sysID.isalnum(): 
+				res = self._cursor.execute("select solarSystemID from mapSolarSystems where solarSystemName = '%s'" % sysID.title()).fetchall()
+				if len(res) == 1:
+					return self.fetch(res[0][0])
+			raise Exception("_SolarSystemModel::fetch() error - unknown solar system")
+		raise Exception("_SolarSystemModel::fetch() error - unsupported type of sysID")
 
 	@classmethod
 	def loadAll(self):
@@ -51,14 +60,14 @@ class _SolarSystemModel(_Data):
 		elif isinstance(sysID, list):
 			self.neighbor = self.neighbor.union(sysID)
 		else:
-			raise "__SolarSystemModel::addNeighbor() - sysID type error"
+			raise Exception("__SolarSystemModel::addNeighbor() - sysID type error")
 	
 	def __setNeighborhood(self):
 		res = self._cursor.execute("select toSolarSystemID from mapSolarSystemJumps where fromSolarSystemID = '%d'" % self.sysID).fetchall()
 		self.__addNeighbor([toSysID[0] for toSysID in res])
 
 	def __str__(self):
-		return "<%s(%d): %.2f, jumps: %d>" % (self.name, self.sysID, self.security, self.jumpsNum)
+		return "<%s(%d): %.3f, jumps: %d>" % (self.name, self.sysID, self.security, self.jumpsNum)
 
 	def __repr__(self):
 		return "__SolarSystemModel.__SolarSystemModel.fetch(%d)" % self.sysID
