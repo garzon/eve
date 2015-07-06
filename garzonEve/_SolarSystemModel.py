@@ -29,12 +29,9 @@ class _SolarSystemModel(_Data):
 			self.fetch(solarArr[0])
 
 		# setup extra info
-		# setup jumps info
-		res = evelink.map.Map().jumps_by_system().result[0]
-		for solarSysID in self._datapool:
-			self._datapool[solarSysID].isLoaded = True
-			if res.has_key(solarSysID):
-				self._datapool[solarSysID].jumpsNum = res[solarSysID]
+		self.__loadJumpsNum()
+		self.__loadKillsNum()
+
 		self._isAllLoaded = True
 
 	def load(self):
@@ -76,6 +73,22 @@ class _SolarSystemModel(_Data):
 
 	# functions below are private ----------------------------
 
+	@classmethod
+	def __loadJumpsNum(self):
+		res = evelink.map.Map().jumps_by_system().result[0]
+		for solarSysID in self._datapool:
+			self._datapool[solarSysID].isLoaded = True
+			if res.has_key(solarSysID):
+				self._datapool[solarSysID].jumpsNum = res[solarSysID]
+
+	@classmethod
+	def __loadKillsNum(self):
+		res = evelink.map.Map().kills_by_system().result[0]
+		for solarSysID in res:
+			self._datapool[solarSysID].NPCKills = res[solarSysID]['faction']
+			self._datapool[solarSysID].shipKills = res[solarSysID]['ship']
+			self._datapool[solarSysID].podKills = res[solarSysID]['pod']
+
 	def __init__(self, sysID):
 		assert self._isAllLoaded == False
 
@@ -87,6 +100,11 @@ class _SolarSystemModel(_Data):
 		# extra info(lazy load) -----------
 		self.isLoaded = self._isAllLoaded
 		self.jumpsNum = 0
+		self.NPCKills = 0
+		self.shipKills = 0
+		self.podKills = 0
+
+		# ---------------------------------
 		self.jumpsFrom = 0
 		self.shortPathSysID = 0
 
@@ -120,7 +138,7 @@ class _SolarSystemModel(_Data):
 		return searched
 
 	def __str__(self):
-		return "<%s(%d): %.3f, jumps: %d>" % (self.name, self.sysID, self.security, self.jumpsNum)
+		return "<%s(%d): %.3f, jumps: %d, NPC: %d, ship: %d, pod: %d>" % (self.name, self.sysID, self.security, self.jumpsNum, self.NPCKills, self.shipKills, self.podKills)
 
 	def __repr__(self):
 		return "garzonEve._SolarSystemModel.fetch(%d)" % self.sysID

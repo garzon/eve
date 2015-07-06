@@ -21,6 +21,12 @@ class SolarSystem:
 			if self._model.isLoaded == False:
 				self._model.load()
 			return self._model.jumpsNum
+		elif keyname == 'NPCKills':
+			return self._model.NPCKills
+		elif keyname == 'podKills':
+			return self._model.podKills
+		elif keyname == 'shipKills':
+			return self._model.shipKills
 		raise Exception("SolarSystem::__getitem__() error - keyname(%s) undefined" % keyname)
 
 	def isSafe(self):
