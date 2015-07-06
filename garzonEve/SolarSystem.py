@@ -49,8 +49,12 @@ class SolarSystem:
 		ret.remove(self._model.sysID)
 		return ret
 
+	@classmethod
+	def updateAllJumps(self):
+		_SolarSystemModel.updateAllJumps()
+
 	def __str__(self):
 		return str(self._model)
 
 	def __repr__(self):
-		return "SolarSystem.SolarSystem(%d)" % self._model.sysID
+		return "garzonEve.SolarSystem(%d)" % self._model.sysID

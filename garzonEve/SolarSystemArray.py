@@ -49,4 +49,4 @@ class SolarSystemArray:
 		return '\n'.join([str(x) for x in self.map.values()])
 
 	def __repr__(self):
-		return "SolarSystemArray.SolarSystemArray.fromIDSet(%s)" % repr(self.map.keys())
+		return "garzonEve.SolarSystemArray.fromIDSet(%s)" % repr(self.map.keys())
