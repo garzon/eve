@@ -21,8 +21,6 @@ class SolarSystem:
 			if self._model.isLoaded == False:
 				self._model.load()
 			return self._model.jumpsNum
-		elif keyname == 'jumpsHist':
-			return self._model.jumpsHist
 		raise Exception("SolarSystem::__getitem__() error - keyname(%s) undefined" % keyname)
 
 	def isSafe(self):
@@ -50,6 +48,13 @@ class SolarSystem:
 		ret = self._getNeighborInJumps(distance, set())
 		ret.remove(self._model.sysID)
 		return ret
+
+	@classmethod
+	def calcJumpsFrom(self, sys):
+		if isinstance(sys, int): sys = self(sys)
+		return sys.calcJumpsFromThis()
+
+	def calc
 
 	@classmethod
 	def updateAllJumps(self):

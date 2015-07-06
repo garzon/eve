@@ -39,27 +39,7 @@ class _SolarSystemModel(_Data):
 		self.isLoaded = True
 		self.loadAll()
 
-	@classmethod
-	def updateAllJumps(self):
-		self.loadAll()
-		for solarSysID in self._datapool:
-			self._datapool[solarSysID].__updateJumps()
-		self._database.commit()
-
 	# functions below are private ----------------------------
-
-	def __updateJumps(self):
-		if not self.isLoaded: self.loadAll()
-		lastCount = sum(self.jumpsHist[-5:])
-		thisCount = self.jumpsNum - lastCount
-		self.jumpsHist += [thisCount]
-		if len(self.jumpsHist) > 48*6:
-			self.jumpsHist = self.jumpsHist[1:]
-		self.__saveHist()
-
-	def __saveHist(self):
-		savedStr = ','.join([str(x) for x in self.jumpsHist])
-		self._cursor.execute("update mapSolarSystems set jumpsHist='%s' where solarSystemID = '%d'" % (savedStr, self.sysID))
 
 	def __init__(self, sysID):
 		assert self._isAllLoaded == False
@@ -72,12 +52,12 @@ class _SolarSystemModel(_Data):
 		# extra info(lazy load) -----------
 		self.isLoaded = self._isAllLoaded
 		self.jumpsNum = 0
+		self.jumpsFrom = 0
 
 	def __setInfo(self):
-		res = self._cursor.execute("select solarSystemName, security, jumpsHist from mapSolarSystems where solarSystemID = '%d'" % self.sysID).fetchone()
+		res = self._cursor.execute("select solarSystemName, security from mapSolarSystems where solarSystemID = '%d'" % self.sysID).fetchone()
 		self.name = res[0]
 		self.security = res[1]
-		self.jumpsHist = [int(x) for x in res[2].split(',')]
 
 	def __addNeighbor(self, sysID):
 		if isinstance(sysID, int):
