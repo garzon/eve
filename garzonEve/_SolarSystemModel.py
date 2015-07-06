@@ -3,6 +3,8 @@ import evelink.map
 
 class _SolarSystemModel(_Data):
 
+	calcJumpsFromWhere = 0
+
 	@classmethod
 	def fetch(self, sysID):
 		if isinstance(sysID, int):
@@ -39,6 +41,29 @@ class _SolarSystemModel(_Data):
 		self.isLoaded = True
 		self.loadAll()
 
+	def getNeighborInJumps(self, distance = 1):
+		ret = self._getNeighborInJumps(distance, set())
+		ret.remove(self.sysID)
+		return ret
+
+	def shortestPath(self):
+		self.calcJumpsFromWhere = self
+		self.loadAll()
+		for solarSysID in self._datapool:
+			self._datapool[solarSysID].jumpsFrom = 99999999
+		self.jumpsFrom = 0
+		queue = [self.sysID]
+		while len(queue) > 0:
+			start = self.fetch(queue[0])
+			queue = queue[1:]
+			neighbors = start.getNeighborInJumps()
+			for sysID in neighbors:
+				neighbor = self.fetch(neighbor)
+				if neighbor.jumpsFrom > start.jumpsFrom + 1:
+					neighbor.jumpsFrom = start.jumpsFrom + 1:
+					if sysID not in queue:
+						queue.append(sysID)
+
 	# functions below are private ----------------------------
 
 	def __init__(self, sysID):
@@ -70,6 +95,18 @@ class _SolarSystemModel(_Data):
 	def __setNeighborhood(self):
 		res = self._cursor.execute("select toSolarSystemID from mapSolarSystemJumps where fromSolarSystemID = '%d'" % self.sysID).fetchall()
 		self.__addNeighbor([toSysID[0] for toSysID in res])
+
+	def _getNeighborInJumps(self, distance, searched):
+		searched.add(self.sysID)
+		if distance != 0:
+			toGo = self.neighbor.difference(searched)
+			while True:
+				if len(toGo) == 0: break
+				aim = toGo.pop()
+				sys = self.fetch(aim)
+				searched = sys._getNeighborInJumps(distance-1, searched)
+				toGo = toGo.difference(searched)
+		return searched
 
 	def __str__(self):
 		return "<%s(%d): %.3f, jumps: %d>" % (self.name, self.sysID, self.security, self.jumpsNum)

@@ -32,29 +32,22 @@ class SolarSystem:
 	def isNotSoSafe(self):
 		return (not self.is00()) and (not self.isSafe())
 
-	def _getNeighborInJumps(self, distance, searched):
-		searched.add(self._model.sysID)
-		if distance != 0:
-			toGo = self._model.neighbor.difference(searched)
-			while True:
-				if len(toGo) == 0: break
-				aim = toGo.pop()
-				sys = SolarSystem(aim)
-				searched = sys._getNeighborInJumps(distance-1, searched)
-				toGo = toGo.difference(searched)
-		return searched
-
 	def getNeighborInJumps(self, distance = 1):
-		ret = self._getNeighborInJumps(distance, set())
-		ret.remove(self._model.sysID)
-		return ret
+		return self._model.getNeighborInJumps(distance)
 
 	@classmethod
 	def calcJumpsFrom(self, sys):
 		if isinstance(sys, int): sys = self(sys)
-		return sys.calcJumpsFromThis()
+		return sys.calcJumpsFromHere()
 
-	def calc
+	def calcJumpsTo(self, sys):
+		if isinstance(sys, int): sys = SolarSystem(sys)
+		self._calcJumpsFromHere()
+		return sys._model.jumpsFrom
+
+	def _calcJumpsFromHere(self):
+		if _SolarSystemModel.calcJumpsFromWhere.sysID != self._model.sysID:
+			self._model.shortestPath()
 
 	@classmethod
 	def updateAllJumps(self):
