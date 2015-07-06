@@ -13,6 +13,7 @@
 
 sqlite> ALTER TABLE mapSolarSystems ADD jumpsHist TEXT;
 sqlite> update `mapSolarSystems` set jumpsHist='0,0,0,0,0';
+sqlite> .quit
 ```
 
 When at 9:51~9:58, add cronjob:
