@@ -21,6 +21,8 @@ class SolarSystem:
 			if self._model.isLoaded == False:
 				self._model.load()
 			return self._model.jumpsNum
+		elif keyname == 'jumpsHist':
+			return self._model.jumpsHist
 		raise Exception("SolarSystem::__getitem__() error - keyname(%s) undefined" % keyname)
 
 	def isSafe(self):
