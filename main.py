@@ -3,7 +3,7 @@ import garzonEve
 # test case
 garzonEve.SolarSystem.loadAll()
 jita = garzonEve.SolarSystem('jita')
-print jita
+jita.printPathTo('Deltole')
 print '-----------------'
 
 def query(solarSys):

@@ -3,7 +3,7 @@ import evelink.map
 
 class _SolarSystemModel(_Data):
 
-	calcJumpsFromWhere = 0
+	calcJumpsFromWhere = -1
 
 	@classmethod
 	def fetch(self, sysID):
@@ -13,10 +13,10 @@ class _SolarSystemModel(_Data):
 			return self._datapool[sysID]
 		elif isinstance(sysID, str):
 			if sysID.replace("-", "").isalnum(): 
-				res = self._cursor.execute("select solarSystemID from mapSolarSystems where solarSystemName = '%s'" % sysID.title()).fetchall()
+				res = self._cursor.execute("select solarSystemID from mapSolarSystems where solarSystemName = '%s'" % sysID.capitalize()).fetchall()
 				if len(res) == 1:
 					return self.fetch(res[0][0])
-			raise Exception("_SolarSystemModel::fetch() error - unknown solar system '%s'" % sysID.title())
+			raise Exception("_SolarSystemModel::fetch() error - unknown solar system '%s'" % sysID.capitalize())
 		raise Exception("_SolarSystemModel::fetch() error - unsupported type of sysID")
 
 	@classmethod
@@ -46,21 +46,31 @@ class _SolarSystemModel(_Data):
 		ret.remove(self.sysID)
 		return ret
 
+	@classmethod
+	def printPath(self, sys):
+		if isinstance(sys, int):
+			if sys == 0: return
+			sys = self.fetch(sys)
+		self.printPath(sys.shortPathSysID)
+		print sys
+
 	def shortestPath(self):
-		self.calcJumpsFromWhere = self
+		self.calcJumpsFromWhere = self.sysID
 		self.loadAll()
 		for solarSysID in self._datapool:
 			self._datapool[solarSysID].jumpsFrom = 99999999
 		self.jumpsFrom = 0
+		self.shortPathSysId = 0
 		queue = [self.sysID]
 		while len(queue) > 0:
 			start = self.fetch(queue[0])
 			queue = queue[1:]
 			neighbors = start.getNeighborInJumps()
 			for sysID in neighbors:
-				neighbor = self.fetch(neighbor)
+				neighbor = self.fetch(sysID)
 				if neighbor.jumpsFrom > start.jumpsFrom + 1:
-					neighbor.jumpsFrom = start.jumpsFrom + 1:
+					neighbor.shortPathSysID = start.sysID
+					neighbor.jumpsFrom = start.jumpsFrom + 1
 					if sysID not in queue:
 						queue.append(sysID)
 
@@ -78,6 +88,7 @@ class _SolarSystemModel(_Data):
 		self.isLoaded = self._isAllLoaded
 		self.jumpsNum = 0
 		self.jumpsFrom = 0
+		self.shortPathSysID = 0
 
 	def __setInfo(self):
 		res = self._cursor.execute("select solarSystemName, security from mapSolarSystems where solarSystemID = '%d'" % self.sysID).fetchone()

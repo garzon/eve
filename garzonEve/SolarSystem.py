@@ -35,18 +35,19 @@ class SolarSystem:
 	def getNeighborInJumps(self, distance = 1):
 		return self._model.getNeighborInJumps(distance)
 
-	@classmethod
-	def calcJumpsFrom(self, sys):
-		if isinstance(sys, int): sys = self(sys)
-		return sys.calcJumpsFromHere()
-
 	def calcJumpsTo(self, sys):
-		if isinstance(sys, int): sys = SolarSystem(sys)
+		if isinstance(sys, int) or isinstance(sys, str): sys = SolarSystem(sys)
 		self._calcJumpsFromHere()
 		return sys._model.jumpsFrom
 
+	def printPathTo(self, sys):
+		if isinstance(sys, int) or isinstance(sys, str): sys = SolarSystem(sys)
+		ret = self.calcJumpsTo(sys)
+		self._model.printPath(sys._model)
+		return ret
+
 	def _calcJumpsFromHere(self):
-		if _SolarSystemModel.calcJumpsFromWhere.sysID != self._model.sysID:
+		if _SolarSystemModel.calcJumpsFromWhere != self._model.sysID:
 			self._model.shortestPath()
 
 	@classmethod
